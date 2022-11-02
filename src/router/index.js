@@ -1,41 +1,36 @@
 import { createRouter, createWebHistory } from 'vue-router'
-const User = {
-    template: '<div>User wwwwwww{{ $route.params.id }}</div>',
-}
+import Home from '../views/index.vue'
 
-// 2. 定义一些路由
-// 每个路由都需要映射到一个组件。
-// 我们后面再讨论嵌套路由。
-const routes = [{
-        path: '/',
-        name: 'ddd',
-        component: User,
-        meta: {
-            title: 'hi'
-        }
+const routes = [
+    // 默认路径自动跳转到Home组件
+    {
+        path: "/",
+        redirect: "/home"
+    },
+    // 下面匹配规则
+    {
+        path: '/home',
+        name: 'Home',
+        component: Home
     },
     {
         path: '/:pathMatch(.*)*',
-        name: "NotFound",
+        name: 'NotFound',
         component: () =>
-            import ("@/views/404.vue"),
-        meta: {
-            title: '404'
-        }
-    }
+            import ( /* webpackChunkName: "about" */ '../views/404.vue')
+    },
 ]
 
-// 3. 创建路由实例并传递 `routes` 配置
-// 你可以在这里输入更多的配置，但我们在这里
-// 暂时保持简单
 const router = createRouter({
     history: createWebHistory(),
-    routes
+    routes,
+    scrollBehavior(to, from, savedPosition) {
+        return new Promise((resolve, reject) => {
+            setTimeout(() => {
+                resolve({ left: 0, top: 0 })
+            }, 500)
+        })
+    },
 })
-router.beforeEach((to, from, next) => {
-    if (to.meta.title) {
-        document.title = to.meta.title + ' ' +
-            import.meta.env.VITE_APP_TITLE
-    }
-})
+
 export default router
